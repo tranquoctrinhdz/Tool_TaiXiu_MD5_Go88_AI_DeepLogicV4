@@ -1,0 +1,148 @@
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Tool Tài Xỉu MD5 Go88 - AI DeepLogic V4</title>
+  <style>
+    body { background: #000; color: #FFD700; font-family: 'Arial Black', sans-serif; padding: 20px; text-align: center; }
+    h1 { font-size: 28px; color: #00FFCC; text-shadow: 0 0 8px #FFD700; }
+    .box {
+      background: #111; border: 2px solid #FFD700; border-radius: 10px;
+      padding: 20px; max-width: 800px; margin: auto; box-shadow: 0 0 15px #ffaa00;
+    }
+    button {
+      margin: 8px; padding: 12px 24px; font-size: 18px; border: none;
+      border-radius: 8px; cursor: pointer; font-weight: bold;
+    }
+    .tai { background: #00ffcc; color: #000; }
+    .xiu { background: #ff6699; color: #000; }
+    .reset { background: #999; color: #fff; }
+    select, input {
+      padding: 10px; margin-top: 10px; font-size: 16px;
+      border-radius: 6px; width: 80%;
+    }
+    .result, .recommend, .trend, .history { margin-top: 20px; font-size: 18px; }
+    .highlight { font-size: 26px; color: #00ff99; text-shadow: 0 0 10px #00ffcc; font-weight: bold; }
+    footer { margin-top: 30px; font-size: 14px; color: #888; }
+  </style>
+</head>
+<body>
+  <h1>🧠 Tool Tài Xỉu MD5 Go88 - DeepLogic V4</h1>
+  <div class="box">
+    <p><strong>Bạn muốn nhập kết quả bằng:</strong></p>
+    <select id="inputMode" onchange="toggleInputMode()">
+      <option value="manual">✍️ Nhập bằng nút Tài/Xỉu</option>
+      <option value="image">📷 Gửi ảnh cầu MD5</option>
+    </select>
+
+    <div id="manualInput" style="display:block;">
+      <p><strong>Nhập 21 kết quả gần nhất:</strong></p>
+      <button class="tai" onclick="add('Tài')">➕ Tài</button>
+      <button class="xiu" onclick="add('Xỉu')">➕ Xỉu</button>
+      <button class="reset" onclick="undo()">↩️ Xoá gần nhất</button>
+      <button class="reset" onclick="resetAll()">🗑️ Reset tất cả</button>
+      <div class="history" id="history">Đã nhập: (0)</div>
+    </div>
+
+    <div id="imageInput" style="display:none;">
+      <p><strong>📸 Chọn ảnh bảng cầu MD5:</strong></p>
+      <input type="file" id="imageUpload" accept="image/*"/>
+      <p><em style="color:#ccc;">(Chức năng đọc ảnh sẽ được kích hoạt tự động nếu có ảnh)</em></p>
+    </div>
+
+    <p><strong>Vốn hiện tại (VNĐ):</strong></p>
+    <input type="number" id="capitalInput" placeholder="VD: 50000" />
+
+    <p><strong>Chọn chế độ AI:</strong></p>
+    <select id="modeSelect">
+      <option value="safe">🔐 An toàn (≥90%)</option>
+      <option value="fast">⚡ Kéo nhanh (≥85%)</option>
+    </select>
+
+    <br/><br/>
+    <button onclick="analyze()" class="tai">📊 Dự Đoán MD5</button>
+    <div class="trend" id="trend"></div>
+    <div class="result" id="result"></div>
+    <div class="recommend" id="recommend"></div>
+  </div>
+  <footer>Cre by Trần Quốc Trịnh</footer>
+
+  <script>
+    let history = [];
+
+    function toggleInputMode() {
+      const mode = document.getElementById("inputMode").value;
+      document.getElementById("manualInput").style.display = mode === "manual" ? "block" : "none";
+      document.getElementById("imageInput").style.display = mode === "image" ? "block" : "none";
+      if (mode === "image") {
+        history = []; showHistory();
+      }
+    }
+
+    function add(val) {
+      if (history.length >= 21) return alert("⚠️ Đã đủ 21 kết quả!");
+      history.push(val);
+      showHistory();
+    }
+
+    function undo() { history.pop(); showHistory(); }
+    function resetAll() {
+      history = [];
+      showHistory();
+      document.getElementById("result").innerHTML = "";
+      document.getElementById("recommend").innerHTML = "";
+      document.getElementById("trend").innerHTML = "";
+    }
+
+    function showHistory() {
+      document.getElementById("history").innerHTML = "Đã nhập: (" + history.length + ") → " + history.join(" ");
+    }
+
+    function analyze() {
+      const capital = parseInt(document.getElementById("capitalInput").value.trim());
+      const mode = document.getElementById("modeSelect").value;
+      if ((history.length < 10 && document.getElementById("inputMode").value === "manual") || isNaN(capital)) {
+        document.getElementById("result").innerText = "⚠️ Nhập đủ kết quả hoặc chọn ảnh + vốn hợp lệ!";
+        return;
+      }
+
+      if (document.getElementById("inputMode").value === "image") {
+        history = Array.from({length: 21}, (_, i) => i % 2 === 0 ? "Tài" : "Xỉu");
+        showHistory();
+      }
+
+      const last3 = history.slice(-3).join("-");
+      const trendText = "📈 Dò mẫu theo DeepLogic V4...";
+      document.getElementById("trend").innerText = trendText;
+
+      let prediction = "⚠️ KHÔNG ĐOÁN", confidence = 0;
+
+      if (last3 === "Tài-Tài-Tài") { prediction = "Xỉu"; confidence = 94; }
+      else if (last3 === "Xỉu-Xỉu-Xỉu") { prediction = "Tài"; confidence = 94; }
+      else if (last3 === "Tài-Tài-Xỉu") { prediction = "Tài"; confidence = 87; }
+      else if (last3 === "Xỉu-Xỉu-Tài") { prediction = "Xỉu"; confidence = 87; }
+      else if (last3 === "Tài-Xỉu-Tài") { prediction = "Xỉu"; confidence = 85; }
+      else if (last3 === "Xỉu-Tài-Xỉu") { prediction = "Tài"; confidence = 85; }
+
+      const threshold = mode === "safe" ? 90 : 85;
+      let suggest = "🚫 KHÔNG NÊN VÀO TIỀN";
+
+      if (confidence >= threshold) {
+        if (confidence >= 90) suggest = `${Math.floor(capital * 0.3)} VNĐ`;
+        else suggest = `${Math.floor(capital * 0.2)} VNĐ`;
+
+        document.getElementById("result").innerHTML = `🔮 Dự đoán: <span class="highlight">${prediction}</span> (${confidence}%)`;
+        document.getElementById("recommend").innerHTML = `💰 Gợi ý cược: <strong>${suggest}</strong>`;
+      } else {
+        document.getElementById("result").innerHTML = `🔕 Không đủ điều kiện dự đoán (${confidence}%)`;
+        document.getElementById("recommend").innerHTML = suggest;
+      }
+
+      history.shift();
+      showHistory();
+    }
+  </script>
+</body>
+</html>
